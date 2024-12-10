@@ -6,8 +6,8 @@ class UIBlock(Block) :
     """
     :param size: sous la forme (longueur, hauteur). size n'est pas un attribut accessible de UIBlock
     """
-    def __init__(self, size:tuple[int,int], coords:tuple[int,int]=(0,0), color:tuple[int,int,int]=DARK) -> None :
-        super().__init__()
+    def __init__(self, valeur:any, size:tuple[int,int], coords:tuple[int,int]=(0,0), color:tuple[int,int,int]=DARK) -> None :
+        super().__init__(valeur)
         self.width, self.height = size
         self.x, self.y = coords
         self.color = color

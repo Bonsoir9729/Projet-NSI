@@ -4,25 +4,26 @@ from UIBlock import UIBlock
 
 class UI :
 
-    block_selected = None
-
     def Init() -> None :
-        pass
+        UI.block_selected = None
+        UI.screen = pygame.display.get_surface()
+        UI.mousepos = pygame.mouse.get_pos()
 
     def Update() -> None :
         screen = pygame.display.get_surface()
-        screen.fill(BLACK)
+        screen.fill(BACKGROUND_COLOR)
+
+        UI.mousepos = pygame.mouse.get_pos()
 
         UI.HandleBlockDragging()
+        UI.Draw_Blocks()
 
-        UI.Draw_Blocks(screen)
-
-    def Draw_Blocks(screen:pygame.Surface) -> None :
+    def Draw_Blocks() -> None :
         """
-        Dessine les rectangles su l'écran passé en argument
+        Dessine les rectangles sur l'écran passé en argument
         """
         for block in sorted(UIBlock.Get(), key=lambda block : block.layer) :
-            pygame.draw.rect(screen, block.color, block.Rect())
+            pygame.draw.rect(UI.screen, block.color, block.Rect())
             if block.suivant :
                 block.suivant.x, block.suivant.y = block.x, block.y + block.height
 
@@ -34,13 +35,43 @@ class UI :
             return
 
         # block_selected suit la souris
-        x, y = pygame.mouse.get_pos()
-        dx, dy = pygame.mouse.get_rel()
-        UI.block_selected.x, UI.block_selected.y = x - dx, y - dy
+        UI.block_selected.x = UI.mousepos[0] + UI.mouseOffset[0]
+        UI.block_selected.y = UI.mousepos[1] + UI.mouseOffset[1]
         if not UI.block_selected.EstRacine() :
             for block in UIBlock.Get() :
                 if block.Detacher(UI.block_selected) :
                     return
+
+    def HandleMouseButtonDown() -> None :
+        """
+        Appelée sur la première frame où la souris est cliquée.
+        """
+        UI.block_selected = UI.CollisionPoint(UI.mousepos)
+
+        # Ne pas commencer à drag si aucune collision n'est detectée avec le curseur
+        if not UI.block_selected :
+            return
+
+        UI.mouseOffset = (UI.block_selected.x - UI.mousepos[0], UI.block_selected.y - UI.mousepos[1])
+        UI.block_selected.layer = 1
+
+    def HandleMouseButtonUp() -> None :
+        """
+        Appelée sur la première frame où clic gauche est relaché.
+        """
+
+        #Si aucun block n'est selectionné, ne rien faire
+        if not UI.block_selected :
+            return
+
+        overlap = UI.block_selected.Overlap()
+        if overlap :
+            if UI.block_selected.y < overlap.y :
+                UI.block_selected.Attacher(overlap)
+            else :
+                overlap.Attacher(UI.block_selected)
+        UI.block_selected.layer = 0
+        UI.block_selected = None
 
     def CollisionPoint(point:tuple[int,int]) -> object :
         """

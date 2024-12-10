@@ -1,19 +1,23 @@
 class Block :
     """
     :param suivant: Block suivant, None si l'objet est une feuille
-    :param parent: Block précédent, None si l'objet est une racine
+    :param imbrique: Block imbriqué, dans les block if par exemple
     """
 
     racinesBlocks = []
 
-    def __init__(self) :
+    def __init__(self, valeur:any) :
         self.suivant = None
+        self.valeur = valeur
         Block.racinesBlocks.append(self)
 
     def EstFeuille(self) -> bool :
         return not self.suivant
 
     def EstRacine(self) -> bool :
+        """
+        ATTENTION : à ne pas abuser, O(nombre de racines)
+        """
         for block in Block.racinesBlocks :
             if block == self :
                 return True
@@ -59,7 +63,7 @@ class Block :
             return True
         return False
 
-    def Attacher(self,block:object) -> None:
+    def Attacher(self,block:object) -> None :
         """
         Attache le block passé en argument en bas du block qui appelle la fonction
         """
@@ -86,9 +90,6 @@ class Block :
         if not self.suivant :
             return [self]
         return [self] + self.suivant.Enfants()
-
-    def CreerEnfant(self) :
-        self.Attacher(Block())
 
     def Get() -> list[object] :
         """
