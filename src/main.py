@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 from UI import UI
 from UIBlock import UIBlock
 from const import *
@@ -7,8 +8,14 @@ from const import *
 def main() :
 
     Init()
+    deltaTime = 1/FPSCAP
     while True:
-        Update()
+        start = time.time()
+        Update(deltaTime)
+        end = time.time()
+        time.sleep(max(0, (1/FPSCAP)-end+start))
+        deltaTime = time.time() - start
+        print(deltaTime)
 
 def Init() :
     pygame.init()
@@ -19,13 +26,13 @@ def Init() :
     UI.Init()
 
     #Debug
-    UIBlock(None, (200,100), color=DARK)
-    UIBlock(None, (200,100), color=WHITE)
-    UIBlock(None, (200,100), color=DARK)
-    UIBlock(None, (200,100), color=WHITE)
+    for i in range(10) :
+
+        UIBlock(None, (200,100), color=DARK)
+        UIBlock(None, (200,100), color=WHITE)
 
 
-def Update() :
+def Update(deltaTime) :
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

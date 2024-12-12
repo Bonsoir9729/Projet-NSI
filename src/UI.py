@@ -15,17 +15,17 @@ class UI :
 
         UI.mousepos = pygame.mouse.get_pos()
 
-        UI.HandleBlockDragging()
         UI.Draw_Blocks()
+        UI.HandleBlockDragging()
 
     def Draw_Blocks() -> None :
         """
         Dessine les rectangles sur l'écran passé en argument
         """
         for block in sorted(UIBlock.Get(), key=lambda block : block.layer) :
-            pygame.draw.rect(UI.screen, block.color, block.Rect())
             if block.suivant :
                 block.suivant.x, block.suivant.y = block.x, block.y + block.height
+            pygame.draw.rect(UI.screen, block.color, block.Rect())
 
     def HandleBlockDragging() -> None :
         """
