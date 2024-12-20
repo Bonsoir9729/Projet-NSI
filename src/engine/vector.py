@@ -25,6 +25,9 @@ class Vector :
             round((math.sin(angle)*self.x)+(math.cos(angle)*self.y),10)
         )
 
+    def coords(self) -> tuple[int,int] :
+        return (self.x, self.y)
+
     def __str__(self) -> str:
         return f"({self.x}, {self.y})"
 

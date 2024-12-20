@@ -1,12 +1,21 @@
-from engine.gameobject import GameObject
 class Script :
-    parent:GameObject
 
-    def __init__(self, parent:GameObject) -> None:
+    parent:object
+
+    invokeQueue = []
+
+    def __init__(self, parent) :
         self.parent = parent
 
-    def Start(self) :
+    def Start() :
         pass
 
-    def Update(self, deltaTime:float) :
+    def Update() :
         pass
+
+    def Invoke(method, time:float=0, args:list[any]=[]) :
+        """
+        Appelle method au bout de time secondes. Si time=0, method est exécutée à la prochaine frame
+        args doit être dans le bon ordre
+        """
+        invokeQueue.append(((method,args), time))
